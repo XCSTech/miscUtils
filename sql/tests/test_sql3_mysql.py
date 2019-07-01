@@ -12,15 +12,6 @@ def myParams():
     db      = config['mysql']['db'] if len(config['mysql']['db']) > 0 else None
     return [host, user, passwd, db]
 
-def msParams():
-    config = configparser.ConfigParser()
-    config.read('test.ini')
-    host    = config['mssql']['host']
-    user    = config['mssql']['user']
-    passwd  = config['mssql']['passwd']
-    db      = config['mssql']['db'] if len(config['mssql']['db']) > 0 else None
-    return [host, user, passwd, db]
-
 def query_commands(run):
     if 'test_db' in [database['Database'] for database in run.query('SHOW DATABASES')]:
         run.query("""DROP DATABASE test_db""")
@@ -75,8 +66,7 @@ def test_mysql_connection():
 
 def test_decorator():
 
-    #@sql3.mysql.con(*[ param for param in  myParams() ])
-    @sql3.mysqlCon('127.0.0.1','root','hellodogetire')
+    @sql3.mysqlCon(*[ param for param in  myParams() ])
     def running(run):
         query_commands(run)
         return True
