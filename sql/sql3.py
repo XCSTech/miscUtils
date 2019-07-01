@@ -40,7 +40,7 @@ def mysqlCon(*parameters):
     def wrap(f):
         def wrapper(*args):
             run = mysql(*parameters)
-            value = f(run, *args)
+            value = f(run, *args, **kwargs)
             run.close()
             return value
         return wrapper
@@ -81,7 +81,7 @@ def mssqlCon(*parameters):
     def wrap(f):
         def wrapper(*args):
             run = mssql(*parameters)
-            value = f(run, *args)
+            value = f(run, *args, **kwargs)
             run.close()
             return value
         return wrapper
