@@ -36,6 +36,16 @@ class mysql(object):
         ## Commit changes
         self.con.commit()
 
+def mysqlCon(*parameters):
+    def wrap(f):
+        def wrapper(*args):
+            run = mysql(*parameters)
+            value = f(run, *args)
+            run.close()
+            return value
+        return wrapper
+    return wrap
+
 
 class mssql(object):
     
@@ -65,3 +75,14 @@ class mssql(object):
     def commit(self):
         ## Commit changes
         self.con.commit()
+
+
+def mssqlCon(*parameters):
+    def wrap(f):
+        def wrapper(*args):
+            run = mssql(*parameters)
+            value = f(run, *args)
+            run.close()
+            return value
+        return wrapper
+    return wrap

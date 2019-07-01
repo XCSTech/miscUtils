@@ -1,3 +1,5 @@
+import sys
+sys.path.append('..')
 import sql3
 import configparser
 
@@ -19,20 +21,7 @@ def msParams():
     db      = config['mssql']['db'] if len(config['mssql']['db']) > 0 else None
     return [host, user, passwd, db]
 
-def connectMy():
-    run = sql3.mysql(*[ param for param in  myParams() ])
-    return run
-
-def closeMy(run):
-    run.close()
-
-def test_mysql_connection():
-    run = connectMy()
-    closeMy(run)
-
-def test_execute_query():
-    run = connectMy()
-    
+def query_commands(run):
     if 'test_db' in [database['Database'] for database in run.query('SHOW DATABASES')]:
         run.query("""DROP DATABASE test_db""")
 
@@ -72,4 +61,29 @@ def test_execute_query():
     run.query(f"""
         DROP        DATABASE IF EXISTS test_db
     """)
+
+def connectMy():
+    run = sql3.mysql(*[ param for param in  myParams() ])
+    return run
+
+def closeMy(run):
+    run.close()
+
+def test_mysql_connection():
+    run = connectMy()
+    closeMy(run)
+
+def test_decorator():
+
+    #@sql3.mysql.con(*[ param for param in  myParams() ])
+    @sql3.mysqlCon('127.0.0.1','root','hellodogetire')
+    def running(run):
+        query_commands(run)
+        return True
+
+    assert running()
+
+def test_execute_query():
+    run = connectMy()
+    query_commands(run)
     closeMy(run)

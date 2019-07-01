@@ -1,3 +1,5 @@
+import sys
+sys.path.append('..')
 import sql3
 import configparser
 
