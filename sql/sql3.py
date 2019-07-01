@@ -1,3 +1,5 @@
+from functools import wraps
+
 class mysql(object):
 
     def __init__(self, host, user, passwd, db=None, **kwargs):
@@ -38,7 +40,7 @@ class mysql(object):
 
 def mysqlCon(*parameters):
     def wrap(f):
-        def wrapper(*args):
+        def wrapper(*args, **kwargs):
             run = mysql(*parameters)
             value = f(run, *args, **kwargs)
             run.close()
@@ -79,7 +81,7 @@ class mssql(object):
 
 def mssqlCon(*parameters):
     def wrap(f):
-        def wrapper(*args):
+        def wrapper(*args, **kwargs):
             run = mssql(*parameters)
             value = f(run, *args, **kwargs)
             run.close()
