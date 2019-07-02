@@ -1,5 +1,3 @@
-from functools import wraps
-
 class mysql(object):
 
     def __init__(self, host, user, passwd, db=None, **kwargs):
@@ -83,6 +81,40 @@ def mssqlCon(*parameters):
     def wrap(f):
         def wrapper(*args, **kwargs):
             run = mssql(*parameters)
+            value = f(run, *args, **kwargs)
+            run.close()
+            return value
+        return wrapper
+    return wrap
+
+class sqlite(object):
+    
+    def __init__(self, path):
+        # Initiate sqlite3 connection
+        print(path)
+        import sqlite3
+        self.con = sqlite3.connect(path)
+        self.con.row_factory = sqlite3.Row
+        self.x = self.con.cursor()
+
+    def close(self):
+        # Close sqlite3 connection
+        self.x.close()
+        self.con.close()
+
+    def query(self, query, *args):
+        # Make query
+        self.x.execute( query.replace('%s','?'), (args) )
+        return self.x.fetchall()
+
+    def commit(self):
+        ## Commit changes
+        self.con.commit()
+
+def liteCon(path):
+    def wrap(f):
+        def wrapper(*args, **kwargs):
+            run = sqlite(path)
             value = f(run, *args, **kwargs)
             run.close()
             return value
